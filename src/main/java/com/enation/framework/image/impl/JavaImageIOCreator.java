@@ -11,9 +11,11 @@ import java.io.IOException;
 
 import com.enation.framework.image.IThumbnailCreator;
 import com.enation.framework.image.ImageRuntimeException;
-import com.sun.image.codec.jpeg.ImageFormatException;
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
+//import com.sun.image.codec.jpeg.ImageFormatException;
+
+import javax.imageio.ImageIO;
+//import com.sun.image.codec.jpeg.JPEGCodec;
+//import com.sun.image.codec.jpeg.JPEGImageEncoder;
 
 /**
  * 使用javax image io生成缩略图
@@ -46,7 +48,7 @@ public class JavaImageIOCreator implements IThumbnailCreator {
 	}
 
 	public void resize(int w, int h) {
-		
+
 
 		int target_w, target_h; // 目标宽高
 		int x = 0, y = 0; // 缩略图在背景的座标
@@ -68,10 +70,10 @@ public class JavaImageIOCreator implements IThumbnailCreator {
 			target_w = (int) (target_h * width / height) ;
 			y = 0;
 			x = (int) (w - target_w) / 2;
-		
+
 		}
 
-		
+
 		BufferedImage _image = new BufferedImage(w, h,
 				BufferedImage.TYPE_INT_RGB);
 		Graphics graphics = _image.getGraphics();
@@ -81,18 +83,20 @@ public class JavaImageIOCreator implements IThumbnailCreator {
 		FileOutputStream out;
 		try {
 			out = new FileOutputStream(destFile);
-			JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
-			encoder.encode(_image);
+			//JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
+			//encoder.encode(_image);
+			ImageIO.write(_image, "jpeg", out);
+			_image.flush();
 			out.close();
 		} catch (FileNotFoundException e) {
-			
+
 			e.printStackTrace();
 			throw new ImageRuntimeException(srcFile, "生成缩略图");
 		} // 输出到文件流
-		catch (ImageFormatException e) {
+		/*catch (ImageFormatException e) {
 			e.printStackTrace();
 			throw new ImageRuntimeException(srcFile, "生成缩略图");
-		} catch (IOException e) {
+		}*/ catch (IOException e) {
 			e.printStackTrace();
 			throw new ImageRuntimeException(srcFile, "生成缩略图");
 		}
@@ -102,6 +106,6 @@ public class JavaImageIOCreator implements IThumbnailCreator {
 	public static void main(String args[]){
 		JavaImageIOCreator creator = new JavaImageIOCreator("e:/IMG_1068.JPG", "e:/IMG_1068_new.JPG");
 		creator.resize(800, 800);
-		
+
 	}
 }
